@@ -1,0 +1,7 @@
+# MySQL installation configuration file.
+
+[mysqld]
+user = mysql
+datadir = /mnt/server/mysql
+socket = /mnt/server/run/mysqld/mysqld.sock
+pid-file = /mnt/server/run/mysqld/mysqld.pid
