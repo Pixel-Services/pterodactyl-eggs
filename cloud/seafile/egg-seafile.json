@@ -1,0 +1,59 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2024-11-25T13:26:03+00:00",
+    "name": "Seafile",
+    "author": "sieadev",
+    "description": "Creates a container that runs Seafile.",
+    "features": null,
+    "docker_images": {
+        "seafileltd/seafile-mc:latest": "seafileltd/seafile-mc:latest"
+    },
+    "file_denylist": [],
+    "startup": "/opt/seafile/seafile-server-latest/seafile.sh start",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"seafile server started\"\r\n}",
+        "logs": "{}",
+        "stop": "/opt/seafile/seafile-server-latest/seafile.sh stop"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\r\n# Seafile Installation Script\r\n#\r\n# Server Files: /mnt/server\r\n\r\napt update\r\napt install -y curl jq\r\n\r\ncd /mnt/server\r\n\r\n# Download and extract Seafile\r\ncurl -L https://download.seadrive.org/seafile-server_8.0.7_x86-64.tar.gz -o seafile-server.tar.gz\r\ntar -xzf seafile-server.tar.gz\r\nrm seafile-server.tar.gz\r\n\r\n# Move Seafile to the appropriate directory\r\nmv seafile-server-* seafile-server-latest\r\n\r\n# Run the setup script\r\ncd seafile-server-latest\r\n./setup-seafile-mysql.sh",
+            "container": "ghcr.io/parkervcp/yolks:debian",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "MYSQL ROOT PASSWORD",
+            "description": "The password for the MySQL root user.",
+            "env_variable": "MYSQL_ROOT_PASSWORD",
+            "default_value": "examplepassword",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|min:8"
+        },
+        {
+            "name": "SEAFILE ADMIN EMAIL",
+            "description": "The email address for the Seafile admin user.",
+            "env_variable": "SEAFILE_ADMIN_EMAIL",
+            "default_value": "admin@example.com",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|email"
+        },
+        {
+            "name": "SEAFILE ADMIN PASSWORD",
+            "description": "The password for the Seafile admin user.",
+            "env_variable": "SEAFILE_ADMIN_PASSWORD",
+            "default_value": "examplepassword",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|min:8"
+        }
+    ]
+}
