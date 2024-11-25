@@ -1,0 +1,41 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+    },
+    "exported_at": "2024-11-25T13:26:03+00:00",
+    "name": "MoBot",
+    "author": "sieadev",
+    "description": "Creates a container that runs MoBot.",
+    "features": null,
+    "docker_images": {
+        "ghcr.io/parkervcp/yolks:java_21": "ghcr.io/parkervcp/yolks:java_21"
+    },
+    "file_denylist": [],
+    "startup": "java -Dterminal.jline=false -Dterminal.ansi=true -jar {{JARFILE}}",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"change this text\"\r\n}",
+        "logs": "{}",
+        "stop": "^C"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\r\n# MoBot Installation Script\r\n#\r\n# Server Files: /mnt/server\r\nPROJECT=mobot\r\n\r\napt update\r\napt install -y curl jq\r\n\r\ncd /mnt/server\r\n\r\n# Download the latest release of MoBot\r\nLATEST_RELEASE=$(curl -s https://api.github.com/repos/sieadev/MoBot/releases/latest | jq -r '.assets[0].browser_download_url')\r\ncurl -L $LATEST_RELEASE -o mobot.jar",
+            "container": "ghcr.io/parkervcp/yolks:debian",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "JAR FILE",
+            "description": "The jar file to run.",
+            "env_variable": "JARFILE",
+            "default_value": "mobot.jar",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:20",
+            "field_type": "text"
+        }
+    ]
+}
