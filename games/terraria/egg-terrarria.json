@@ -4,7 +4,7 @@
     "update_url": null
   },
   "name": "Terraria Server",
-  "author": "yourname",
+  "author": "sieadev",
   "description": "Terraria server with selectable version.",
   "docker_images": {
     "debian": "quay.io/pterodactyl/core:debian",

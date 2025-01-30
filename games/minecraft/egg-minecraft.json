@@ -11,7 +11,6 @@
     "java_version",
     "pid_limit"
   ],
-  "file_denylist": [],
   "docker_images": {
     "Java 21": "ghcr.io/pterodactyl/yolks:java_21",
     "Java 17": "ghcr.io/pterodactyl/yolks:java_17",
