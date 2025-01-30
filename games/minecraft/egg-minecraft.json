@@ -1,64 +1,90 @@
 {
-  "meta": {
-    "version": "PTDL_v1",
-    "update_url": null
-  },
-  "name": "Minecraft Server",
-  "author": "sieadev",
-  "description": "Minecraft is a game about placing blocks and going on adventures. Explore randomly generated worlds and build amazing things from the simplest of homes to the grandest of castles. Play in Creative Mode with unlimited resources or mine deep in Survival Mode, crafting weapons and armor to fend off dangerous mobs. Do all this alone or with friends.",
-  "features": [
-    "eula",
-    "java_version",
-    "pid_limit"
-  ],
-  "docker_images": {
-    "Java 21": "ghcr.io/pterodactyl/yolks:java_21",
-    "Java 17": "ghcr.io/pterodactyl/yolks:java_17",
-    "Java 16": "ghcr.io/pterodactyl/yolks:java_16",
-    "Java 11": "ghcr.io/pterodactyl/yolks:java_11",
-    "Java 8": "ghcr.io/pterodactyl/yolks:java_8"
-  },
-  "startup": "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}",
-  "config": {
-    "files": "{\n    \"eula.txt\": {\n        \"parser\": \"file\",\n        \"find\": {\n            \"eula=false\": \"eula=true\"\n        }\n    }\n}",
-    "startup": "{\n    \"done\": \"Done\"\n}",
-    "logs": "{\n    \"custom\": false,\n    \"location\": \"logs/latest.log\"\n}",
-    "stop": "stop"
-  },
+    "_comment": "DO NOT EDIT WITHOUT CHECKING AGAINST GITHUB :)",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2025-01-30T22:57:53+00:00",
+    "name": "MultiMinecraft",
+    "author": "office@pixel-services.com",
+    "description": "Pixel Services' Custom multi-platform Minecraft egg.",
+    "features": [
+        "eula",
+        "java_version",
+        "pid_limit"
+    ],
+    "docker_images": {
+        "Java 21": "ghcr.io\/pterodactyl\/yolks:java_21",
+        "Java 17": "ghcr.io\/pterodactyl\/yolks:java_17",
+        "Java 16": "ghcr.io\/pterodactyl\/yolks:java_16",
+        "Java 11": "ghcr.io\/pterodactyl\/yolks:java_11",
+        "Java 8": "ghcr.io\/pterodactyl\/yolks:java_8"
+    },
+    "file_denylist": [],
+    "startup": "java -Xms128M -Xmx{{SERVER_MEMORY}}M --add-modules=jdk.incubator.vector -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https:\/\/mcflags.emc.gs -Daikars.new.flags=true -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -jar {{SERVER_JARFILE}}",
+    "config": {
+        "files": "{\r\n    \"server.properties\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"server-ip\": \"0.0.0.0\",\r\n            \"server-port\": \"{{server.build.default.port}}\",\r\n            \"query.port\": \"{{server.build.default.port}}\",\r\n            \"motd\": \"Your Minecraft Server is Ready ! - Hosted by Pixel Services\"\r\n        }\r\n    }\r\n}",
+        "startup": "{\r\n    \"done\": \")! For help, type \"\r\n}",
+        "logs": "{}",
+        "stop": "stop"
+    },
     "scripts": {
-     "installation": {
-        "script": "#!/bin/bash\n# Minecraft Server Installation Script\n\ncd /mnt/server\n\n# Define the URL for the server jar based on the selected software and version\ncase ${SERVER_SOFTWARE} in\n  vanilla)\n    SERVER_JAR_URL=\"https://launcher.mojang.com/v1/objects/$(curl -s https://launchermeta.mojang.com/mc/game/version_manifest.json | jq -r --arg VERSION \"$SERVER_VERSION\" '.versions[] | select(.id == $VERSION) | .url' | xargs curl -s | jq -r '.downloads.server.url')\"\n    ;;\n  spigot)\n    SERVER_JAR_URL=\"https://cdn.getbukkit.org/spigot/spigot-${SERVER_VERSION}.jar\"\n    ;;\n  paper)\n    SERVER_JAR_URL=\"https://papermc.io/api/v1/paper/${SERVER_VERSION}/latest/download\"\n    ;;\n  forge)\n    SERVER_JAR_URL=\"https://files.minecraftforge.net/maven/net/minecraftforge/forge/${SERVER_VERSION}/forge-${SERVER_VERSION}-installer.jar\"\n    ;;\n  fabric)\n    SERVER_JAR_URL=\"https://maven.fabricmc.net/net/fabricmc/fabric-installer/${SERVER_VERSION}/fabric-installer-${SERVER_VERSION}.jar\"\n    ;;\n  bungeecord)\n    SERVER_JAR_URL=\"https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar\"\n    ;;\n  velocity)\n    SERVER_JAR_URL=\"https://ci.velocitypowered.com/job/velocity/lastSuccessfulBuild/artifact/proxy/build/libs/velocity-proxy-${SERVER_VERSION}.jar\"\n    ;;\n  sponge)\n    SERVER_JAR_URL=\"https://repo.spongepowered.org/maven/org/spongepowered/spongevanilla/${SERVER_VERSION}/spongevanilla-${SERVER_VERSION}.jar\"\n    ;;\n  *)\n    echo \"Invalid server software selected.\"\n    exit 1\n    ;;\nesac\n\n# Download the server jar\ncurl -o server.jar ${SERVER_JAR_URL}\n\n# Accept the EULA\necho 'eula=true' > eula.txt",
-        "container": "debian:buster-slim",
-       "entrypoint": "bash"
-    }
-  },
-  "variables": [
-    {
-      "name": "Server Software",
-      "description": "Select the server software to use.",
-      "env_variable": "SERVER_SOFTWARE",
-      "default_value": "vanilla",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string|in:vanilla,spigot,paper,forge,fabric,bungeecord,velocity,sponge"
+        "installation": {
+            "script": "#!\/bin\/ash\r\n# Universal Server Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\n\r\n# Generate EULA file\r\necho \"Generating eula.txt\"\r\necho \"eula=${ACCEPT_EULA:-false}\" > \/mnt\/server\/eula.txt\r\n\r\n# Set default software if not specified\r\nSERVER_SOFTWARE=${SERVER_SOFTWARE:-paper}\r\n\r\nif [ -n \"${DL_PATH}\" ]; then\r\n    echo -e \"Using supplied download url: ${DL_PATH}\"\r\n    DOWNLOAD_URL=$(eval echo $(echo \"${DL_PATH}\" | sed -e 's\/{{\/${\/g' -e 's\/}}\/}\/g'))\r\nelse\r\n    API_BASE=\"https:\/\/mcutils.com\/api\/server-jars\"\r\n    API_URL=\"${API_BASE}\/${SERVER_SOFTWARE}\/${MINECRAFT_VERSION}\"\r\n    FALLBACK_URL=\"${API_BASE}\/${SERVER_SOFTWARE}\/latest\"\r\n\r\n    echo -e \"Initial attempt: ${API_URL}\"\r\n    JAR_INFO=$(curl -s \"${API_URL}\")\r\n    \r\n    # If initial attempt fails, try with latest version\r\n    if [ -z \"$(echo \"${JAR_INFO}\" | jq -r '.downloadUrl')\" ]; then\r\n        echo \"Specified version not found, trying latest version\"\r\n        JAR_INFO=$(curl -s \"${FALLBACK_URL}\")\r\n        API_URL=${FALLBACK_URL}\r\n        MINECRAFT_VERSION=\"latest\"\r\n    fi\r\n\r\n    # Validate response again\r\n    if [ -z \"$(echo \"${JAR_INFO}\" | jq -r '.downloadUrl')\" ]; then\r\n        echo \"Error: Failed to find valid version for ${SERVER_SOFTWARE}\"\r\n        echo \"Final API attempt: ${API_URL}\"\r\n        echo \"Response: ${JAR_INFO}\"\r\n        exit 1\r\n    fi\r\n\r\n    DOWNLOAD_URL=$(echo \"${JAR_INFO}\" | jq -r '.downloadUrl')\r\n    JAR_NAME=$(echo \"${JAR_INFO}\" | jq -r '.fileName')\r\n    ACTUAL_VERSION=$(echo \"${JAR_INFO}\" | jq -r '.version')\r\n\r\n    echo -e \"Resolved Version: ${ACTUAL_VERSION} (requested: ${MINECRAFT_VERSION})\"\r\nfi\r\n\r\ncd \/mnt\/server\r\n\r\necho -e \"Downloading server jar: ${DOWNLOAD_URL}\"\r\nif [ -f \"${SERVER_JARFILE}\" ]; then\r\n    mv \"${SERVER_JARFILE}\" \"${SERVER_JARFILE}.old\"\r\nfi\r\n\r\ncurl -L -o \"${SERVER_JARFILE}\" \"${DOWNLOAD_URL}\"\r\n\r\n# Update server.properties\r\nSERVER_PROPERTIES=\"server.properties\"\r\nif [ ! -f \"${SERVER_PROPERTIES}\" ]; then\r\n    echo -e \"Creating default server.properties\"\r\n    touch \"${SERVER_PROPERTIES}\"\r\nfi",
+            "container": "ghcr.io\/pterodactyl\/installers:alpine",
+            "entrypoint": "ash"
+        }
     },
-    {
-      "name": "Server Version",
-      "description": "Select the version of the server software.",
-      "env_variable": "SERVER_VERSION",
-      "default_value": "latest",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string"
-    },
-    {
-      "name": "Accept EULA",
-      "description": "You must accept the Minecraft EULA to proceed.",
-      "env_variable": "ACCEPT_EULA",
-      "default_value": "false",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|boolean|accepted"
-    }
-  ]
+    "variables": [
+        {
+            "name": "Minecraft Version",
+            "description": "The version of minecraft to download. \r\n\r\nLeave at latest to always get the latest version. Invalid versions will default to latest.",
+            "env_variable": "MINECRAFT_VERSION",
+            "default_value": "latest",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:20",
+            "field_type": "text"
+        },
+        {
+            "name": "Server Jar File",
+            "description": "The name of the server jarfile to run the server with. (Default is server.jar)",
+            "env_variable": "SERVER_JARFILE",
+            "default_value": "server.jar",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|regex:\/^([\\w\\d._-]+)(\\.jar)$\/",
+            "field_type": "text"
+        },
+        {
+            "name": "Download Path",
+            "description": "A URL to use to download a server.jar rather than the ones in the install script. This is not user viewable.",
+            "env_variable": "DL_PATH",
+            "default_value": "",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "nullable|string",
+            "field_type": "text"
+        },
+        {
+            "name": "Server Software",
+            "description": "Type of server software (paper, purpur, spigot, etc).\r\n\r\nNote: Certain versions of specific server software may not be available or released yet. Please verify the version\/software combination at https:\/\/mcutils.com\/server-jars before specifying.",
+            "env_variable": "SERVER_SOFTWARE",
+            "default_value": "vanilla",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:purpur,pufferfish,paper,spigot,craftbukkit,vanilla,folia,velocity,waterfall,fabric,neoforge,quilt,forge",
+            "field_type": "text"
+        },
+        {
+            "name": "Accept EULA",
+            "description": "Do you accept the Minecraft EULA? (true\/false).\r\n\r\nNote: If set to false, the Minecraft server will not start. If you change your mind later, you can update this setting in the file manager by editing eula.txt and changing it to true.",
+            "env_variable": "ACCEPT_EULA",
+            "default_value": "true",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:true,false",
+            "field_type": "text"
+        }
+    ]
 }
