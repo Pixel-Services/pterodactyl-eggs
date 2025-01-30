@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "version": "PTDL_v1",
+    "update_url": null
+  },
+  "name": "Terraria Server",
+  "author": "yourname",
+  "description": "Terraria server with selectable version.",
+  "docker_images": {
+    "debian": "quay.io/pterodactyl/core:debian",
+    "alpine": "quay.io/pterodactyl/core:alpine"
+  },  "startup": "./TerrariaServer -config serverconfig.txt",
+  "config": {
+    "files": "{}",
+    "startup": "{\n    \"done\": \"Server started\"\n}",
+    "logs": "{\n    \"custom\": false,\n    \"location\": \"logs/terraria.log\"\n}",
+    "stop": "exit"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\n# Terraria Server Installation Script\n\ncd /mnt/server\n\n# Download the Terraria server files\ncurl -o terraria-server.zip https://example.com/path/to/terraria-server.zip\n\n# Unzip the server files\nunzip terraria-server.zip\n\n# Clean up\nrm terraria-server.zip",
+      "container": "debian:buster-slim",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Server Version",
+      "description": "Select the version of the Terraria server.",
+      "env_variable": "SERVER_VERSION",
+      "default_value": "latest",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string"
+    }
+  ]
+}

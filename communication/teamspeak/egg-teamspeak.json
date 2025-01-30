@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "version": "PTDL_v1",
+    "update_url": null
+  },
+  "name": "TeamSpeak Server",
+  "author": "sieadev",
+  "description": "TeamSpeak is a VoIP application for voice communication.",
+  "docker_images": {
+    "debian": "quay.io/pterodactyl/core:debian",
+    "alpine": "quay.io/pterodactyl/core:alpine"
+  },
+  "startup": "./ts3server_minimal_runscript.sh",
+  "config": {
+    "files": "{}",
+    "startup": "{\n    \"done\": \"listening on\"\n}",
+    "logs": "{\n    \"custom\": false,\n    \"location\": \"logs/ts3server.log\"\n}",
+    "stop": "./ts3server_startscript.sh stop"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\n# TeamSpeak Server Installation Script\n\ncd /mnt/server\n\n# Download the TeamSpeak server files\ncurl -o teamspeak-server.tar.bz2 https://files.teamspeak-services.com/releases/server/3.13.6/teamspeak3-server_linux_amd64-3.13.6.tar.bz2\n\n# Extract the server files\ntar -xjf teamspeak-server.tar.bz2 --strip-components=1\n\n# Clean up\nrm teamspeak-server.tar.bz2",
+      "container": "debian:buster-slim",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Server Version",
+      "description": "Select the version of the TeamSpeak server.",
+      "env_variable": "SERVER_VERSION",
+      "default_value": "3.13.6",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string"
+    }
+  ]
+}

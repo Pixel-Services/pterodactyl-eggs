@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "version": "PTDL_v1",
+    "update_url": null
+  },
+  "name": "Minecraft Server",
+  "author": "sieadev",
+  "description": "Minecraft is a game about placing blocks and going on adventures. Explore randomly generated worlds and build amazing things from the simplest of homes to the grandest of castles. Play in Creative Mode with unlimited resources or mine deep in Survival Mode, crafting weapons and armor to fend off dangerous mobs. Do all this alone or with friends.",
+  "features": [
+    "eula",
+    "java_version",
+    "pid_limit"
+  ],
+  "file_denylist": [],
+  "docker_images": {
+    "Java 21": "ghcr.io/pterodactyl/yolks:java_21",
+    "Java 17": "ghcr.io/pterodactyl/yolks:java_17",
+    "Java 16": "ghcr.io/pterodactyl/yolks:java_16",
+    "Java 11": "ghcr.io/pterodactyl/yolks:java_11",
+    "Java 8": "ghcr.io/pterodactyl/yolks:java_8"
+  },
+  "startup": "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}",
+  "config": {
+    "files": "{\n    \"eula.txt\": {\n        \"parser\": \"file\",\n        \"find\": {\n            \"eula=false\": \"eula=true\"\n        }\n    }\n}",
+    "startup": "{\n    \"done\": \"Done\"\n}",
+    "logs": "{\n    \"custom\": false,\n    \"location\": \"logs/latest.log\"\n}",
+    "stop": "stop"
+  },
+    "scripts": {
+     "installation": {
+        "script": "#!/bin/bash\n# Minecraft Server Installation Script\n\ncd /mnt/server\n\n# Define the URL for the server jar based on the selected software and version\ncase ${SERVER_SOFTWARE} in\n  vanilla)\n    SERVER_JAR_URL=\"https://launcher.mojang.com/v1/objects/$(curl -s https://launchermeta.mojang.com/mc/game/version_manifest.json | jq -r --arg VERSION \"$SERVER_VERSION\" '.versions[] | select(.id == $VERSION) | .url' | xargs curl -s | jq -r '.downloads.server.url')\"\n    ;;\n  spigot)\n    SERVER_JAR_URL=\"https://cdn.getbukkit.org/spigot/spigot-${SERVER_VERSION}.jar\"\n    ;;\n  paper)\n    SERVER_JAR_URL=\"https://papermc.io/api/v1/paper/${SERVER_VERSION}/latest/download\"\n    ;;\n  forge)\n    SERVER_JAR_URL=\"https://files.minecraftforge.net/maven/net/minecraftforge/forge/${SERVER_VERSION}/forge-${SERVER_VERSION}-installer.jar\"\n    ;;\n  fabric)\n    SERVER_JAR_URL=\"https://maven.fabricmc.net/net/fabricmc/fabric-installer/${SERVER_VERSION}/fabric-installer-${SERVER_VERSION}.jar\"\n    ;;\n  bungeecord)\n    SERVER_JAR_URL=\"https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar\"\n    ;;\n  velocity)\n    SERVER_JAR_URL=\"https://ci.velocitypowered.com/job/velocity/lastSuccessfulBuild/artifact/proxy/build/libs/velocity-proxy-${SERVER_VERSION}.jar\"\n    ;;\n  sponge)\n    SERVER_JAR_URL=\"https://repo.spongepowered.org/maven/org/spongepowered/spongevanilla/${SERVER_VERSION}/spongevanilla-${SERVER_VERSION}.jar\"\n    ;;\n  *)\n    echo \"Invalid server software selected.\"\n    exit 1\n    ;;\nesac\n\n# Download the server jar\ncurl -o server.jar ${SERVER_JAR_URL}\n\n# Accept the EULA\necho 'eula=true' > eula.txt",
+        "container": "debian:buster-slim",
+       "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Server Software",
+      "description": "Select the server software to use.",
+      "env_variable": "SERVER_SOFTWARE",
+      "default_value": "vanilla",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|in:vanilla,spigot,paper,forge,fabric,bungeecord,velocity,sponge"
+    },
+    {
+      "name": "Server Version",
+      "description": "Select the version of the server software.",
+      "env_variable": "SERVER_VERSION",
+      "default_value": "latest",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string"
+    },
+    {
+      "name": "Accept EULA",
+      "description": "You must accept the Minecraft EULA to proceed.",
+      "env_variable": "ACCEPT_EULA",
+      "default_value": "false",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|boolean|accepted"
+    }
+  ]
+}
