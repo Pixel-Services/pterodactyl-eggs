@@ -2,7 +2,6 @@
     "meta": {
         "version": "PTDL_v2"
     },
-    "exported_at": "2024-11-25T13:26:03+00:00",
     "name": "MoBot",
     "author": "sieadev",
     "description": "Creates a container that runs MoBot.",
