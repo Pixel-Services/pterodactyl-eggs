@@ -1,35 +1,37 @@
 {
-    "meta": {
-        "version": "PTDL_v2"
-    },
-    "name": "MoBot",
-    "author": "sieadev",
-    "description": "Creates a container that runs MoBot.",
-    "docker_images": {
-        "ghcr.io/parkervcp/yolks:java_21": "ghcr.io/parkervcp/yolks:java_21"
-    },
-    "startup": "java -Dterminal.jline=false -Dterminal.ansi=true -jar {{JARFILE}}",
-    "config": {
-        "startup": "{\r\n    \"done\": \"change this text\"\r\n}",
-        "stop": "^C"
-    },
-    "scripts": {
-        "installation": {
-            "script": "#!/bin/bash\r\n# MoBot Installation Script\r\n#\r\n# Server Files: /mnt/server\r\nPROJECT=mobot\r\n\r\napt update\r\napt install -y curl jq\r\n\r\ncd /mnt/server\r\n\r\n# Download the latest release of MoBot\r\nLATEST_RELEASE=$(curl -s https://api.github.com/repos/sieadev/MoBot/releases/latest | jq -r '.assets[0].browser_download_url')\r\ncurl -L $LATEST_RELEASE -o mobot.jar",
-            "container": "ghcr.io/parkervcp/yolks:debian",
-            "entrypoint": "bash"
-        }
-    },
-    "variables": [
-        {
-            "name": "JAR FILE",
-            "description": "The jar file to run.",
-            "env_variable": "JARFILE",
-            "default_value": "mobot.jar",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|max:20",
-            "field_type": "text"
-        }
-    ]
+  "meta": {
+    "version": "PTDL_v2"
+  },
+  "name": "MoBot",
+  "author": "contact@pixel-services.com",
+  "description": "Creates a container that runs MoBot.",
+  "docker_images": {
+    "ghcr.io/parkervcp/yolks:java_21": "ghcr.io/parkervcp/yolks:java_21"
+  },
+  "startup": "java -Dterminal.jline=false -Dterminal.ansi=true -jar {{JARFILE}}",
+  "config": {
+    "startup": "{}",
+    "stop": "^C",
+    "logs": "{\"custom\": false, \"location\": \"latest.log\"}",
+    "files": "{}"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\n# MoBot Installation Script\n#\n# Server Files: /mnt/server\nPROJECT=mobot\n\napt update\napt install -y curl jq\n\ncd /mnt/server\n\n# Download the latest release of MoBot\nLATEST_RELEASE=$(curl -s https://api.github.com/repos/Pixel-Services/MoBot/releases/latest | jq -r '.assets[0].browser_download_url')\ncurl -L $LATEST_RELEASE -o mobot.jar",
+      "container": "ghcr.io/parkervcp/yolks:debian",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "JAR FILE",
+      "description": "The jar file to run.",
+      "env_variable": "JARFILE",
+      "default_value": "mobot.jar",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|max:20",
+      "field_type": "text"
+    }
+  ]
 }
