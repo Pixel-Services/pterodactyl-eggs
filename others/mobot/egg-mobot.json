@@ -3,7 +3,7 @@
     "version": "PTDL_v2"
   },
   "name": "MoBot",
-  "author": "sieadev@example.com",
+  "author": "contact@pixel-services.com",
   "description": "Creates a container that runs MoBot.",
   "docker_images": {
     "ghcr.io/parkervcp/yolks:java_21": "ghcr.io/parkervcp/yolks:java_21"
